@@ -12,7 +12,7 @@ data "aws_secretsmanager_secret" "aws-keys-secret" {
   name = "aws_keys"
 }
 
-#Data source to retreive values from secret manager
+#Data source to retreive values from secret manager.
 data "aws_secretsmanager_secret_version" "aws-secret-names" {
   secret_id = data.aws_secretsmanager_secret.aws-keys-secret.id
 }
