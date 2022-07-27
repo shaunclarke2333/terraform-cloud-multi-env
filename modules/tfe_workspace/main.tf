@@ -1,10 +1,20 @@
-# resource block to automatically create workspaces in terraform cloud
-resource "tfe_workspace" "main" {
+# createing workspaces in tf cloud
+resource "tfe_workspace" "workspace" {
   for_each = toset(var.workspaces)
 
-  name         = each.value
-  organization = "mypracticelab"
+  name              = each.value
+  organization      = var.organization
   terraform_version = "1.1.8"
+}
+
+# adding tfvars environment variables to each worksapce
+resource "tfe_variable" "env-variables" {
+  for_each = toset(var.workspaces)
+
+  key          = "TF_CLI_ARGS_plan"
+  value        = "-var-file=env/${each.value}.tfvars"
+  category     = "env"
+  workspace_id = tfe_workspace.workspace["${each.value}"].id
 }
 
 #getting the secret with teh aws keys
@@ -31,6 +41,7 @@ locals {
     data.aws_secretsmanager_secret_version.aws-secret-names.secret_string
   )["aws_region"]
 }
+
 
 #Global variable set to apply aws credentials to workspaces
 resource "tfe_variable_set" "aws_creds" {
