@@ -2,10 +2,5 @@
 terraform {
   backend "remote" {
     hostname     = "app.terraform.io"
-    organization = "mypracticelab"
-
-    workspaces {
-      prefix = "main-"
-    }
   }
 }
